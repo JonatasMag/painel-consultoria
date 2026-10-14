@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Painel de Consultoria | Jonatas Magalhães</title>
+  <meta name="description" content="CRM e funil para consultoria de dados e processos: diagnóstico, POPs, planilhas, dashboards, automações, acompanhamento mensal e treinamento." />
+  <meta name="theme-color" content="#0c2238" />
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="assets/fonts/inter-400.woff" as="font" type="font/woff" crossorigin />
+  <link rel="stylesheet" href="assets/css/app.css" />
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <section class="acesso" id="acesso" aria-labelledby="acesso-titulo">
+    <form class="acesso-cartao" id="form-acesso">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34.5 19 23l8 7 13-16" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square"/><circle cx="8" cy="34.5" r="3.4" fill="currentColor"/><circle cx="19" cy="23" r="3.4" fill="currentColor"/><circle cx="27" cy="30" r="3.4" fill="currentColor"/><circle cx="40" cy="14" r="3.4" fill="#e8a33d"/></svg>
+      <h1 id="acesso-titulo">Painel de Consultoria</h1>
+      <p>Acesso restrito. Os materiais deste painel são protegidos por senha.</p>
+      <div class="campo"><label for="senha">Senha</label><input type="password" id="senha" autocomplete="current-password" required autofocus></div>
+      <p class="acesso-erro" id="erro-acesso" role="alert" hidden></p>
+      <button class="btn btn-sinal" type="submit">Entrar</button>
+      <p class="acesso-nota">Quer conhecer o painel? Fale com <a href="https://jonatasmag.github.io/#contato">Jonatas Magalhães</a>.</p>
+    </form>
+  </section>
+  <div class="app" hidden>
+    <aside class="lateral" id="lateral">
+      <a class="marca" href="#/">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34.5 19 23l8 7 13-16" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square"/><circle cx="8" cy="34.5" r="3.4" fill="currentColor"/><circle cx="19" cy="23" r="3.4" fill="currentColor"/><circle cx="27" cy="30" r="3.4" fill="currentColor"/><circle cx="40" cy="14" r="3.4" fill="#e8a33d"/></svg>
+        <span><b>Painel de Consultoria</b><small>Jonatas Magalhães</small></span>
+      </a>
+      <nav class="menu" aria-label="Seções do painel">
+        <a href="#/" data-rota="inicio">Início</a>
+        <a href="#/funil" data-rota="funil">Funil</a>
+        <a href="#/clientes" data-rota="clientes">Clientes</a>
+        <a href="#/acompanhamento" data-rota="acompanhamento">Acompanhamento <span class="contador" id="contador-avisos" hidden></span></a>
+        <a href="#/biblioteca" data-rota="biblioteca">Materiais</a>
+        <a href="#/config" data-rota="config">Configurações</a>
+      </nav>
+      <p class="lateral-nota">Os dados ficam só neste navegador. Faça backup em Configurações.</p>
+      <button type="button" class="sair" onclick="sairDoPainel()">Sair</button>
+    </aside>
+    <div class="principal">
+      <div class="aviso-exemplo" id="aviso-exemplo" hidden>
+        <p>Você está vendo <b>clientes de exemplo</b>, com dados fictícios.</p>
+        <button type="button" class="btn btn-claro" id="comecar">Começar com meus clientes</button>
+      </div>
+      <main id="conteudo" tabindex="-1"></main>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/js/graficos.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/cofre.js"></script>
+</body>
+</html>
