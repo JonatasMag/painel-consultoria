@@ -14,25 +14,55 @@
       '<div class="acoes" style="margin-bottom:18px"><button class="btn btn-sinal" onclick="window.print()">Imprimir ou salvar PDF</button>' + voltar(c, etapa) + "</div></div>";
   }
 
-  // ---------- POP ----------
+  // ---------- POP no padrão ABNT, com timbrado ----------
+  function arquivoPop(pop) {
+    return pop.arquivo || (pop.id + "-" + pop.titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""));
+  }
+  function alineas(itens) {
+    var letras = "abcdefghijklmnopqrstuvwxyz";
+    return '<ol class="alineas">' + itens.map(function (t, i) {
+      var s = t.trim(), w = s.split(/\s/)[0];
+      if (!(w.length > 1 && w === w.toUpperCase())) s = s.charAt(0).toLowerCase() + s.slice(1);
+      s = s.replace(/[.;]$/, "") + (i === itens.length - 1 ? "." : ";");
+      return "<li><span>" + letras[i] + ")</span> " + esc(s) + "</li>";
+    }).join("") + "</ol>";
+  }
+  function timbradoTopo(codigo) {
+    return '<div class="timbrado-topo"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34.5 19 23l8 7 13-16" fill="none" stroke="#0c2238" stroke-width="3.5" stroke-linecap="square"/><circle cx="8" cy="34.5" r="3.4" fill="#0c2238"/><circle cx="19" cy="23" r="3.4" fill="#0c2238"/><circle cx="27" cy="30" r="3.4" fill="#0c2238"/><circle cx="40" cy="14" r="3.4" fill="#e8a33d"/></svg>' +
+      "<b>JONATAS MAGALHÃES</b><span>Consultoria em Dados, Processos e Operações</span><em>" + esc(codigo) + "</em></div>";
+  }
+  function timbradoRodape() { return '<div class="timbrado-rodape">' + esc(K.site) + "  |  " + esc(K.email) + "  |  " + esc(K.whatsapp) + "  |  Joinville – SC</div>"; }
+
   P.views.pop = function (main, id, q) {
     var pop = C.pops.filter(function (p) { return p.id === id; })[0];
     if (!pop) return P.views.naoEncontrado(main);
     var c = q.get("c") ? S.cliente(q.get("c")) : null;
     var pl = C.planilhas.filter(function (x) { return x.arquivo === pop.planilha; })[0];
+    var arq = "materiais/pops/" + arquivoPop(pop);
+    var etapas = pop.etapas || [["Execução", pop.passos]];
+    var n = 0, corpo = "";
+    function sec(t) { n++; return "<h2>" + n + " " + t.toUpperCase() + "</h2>"; }
+    var ficha = [["Código", pop.id], ["Versão", "1.0, de " + P.dataBR(P.hoje())], ["Área", pop.area && C.areas[pop.area] ? C.areas[pop.area].nome : pop.area],
+      ["Responsável", pop.responsavel], ["Frequência", pop.frequencia], ["Registro", "Planilha " + (pl ? pl.nome + " (" + pop.planilha + ")" : pop.planilha)],
+      ["Indicador e meta", pop.indicador], ["Empresa", c ? c.empresa : "______________________________"]];
+    corpo += '<p class="abnt-titulo">PROCEDIMENTO OPERACIONAL PADRÃO<br>' + esc(pop.id) + " – " + esc(pop.titulo.toUpperCase()) + "</p>";
+    corpo += '<table class="abnt-ficha"><tbody>' + ficha.map(function (l) { return "<tr><th>" + l[0] + "</th><td>" + esc(l[1]) + "</td></tr>"; }).join("") + "</tbody></table>";
+    corpo += sec("Objetivo") + "<p>" + esc(pop.objetivo) + "</p>";
+    if (pop.aplicacao) corpo += sec("Campo de aplicação") + "<p>" + esc(pop.aplicacao) + "</p>";
+    if (pop.responsabilidades) corpo += sec("Responsabilidades") + '<table class="abnt-tab"><thead><tr><th>Função</th><th>Atribuição</th></tr></thead><tbody>' + pop.responsabilidades.map(function (r) { return "<tr><td>" + esc(r.papel) + "</td><td>" + esc(r.faz) + "</td></tr>"; }).join("") + "</tbody></table>";
+    if (pop.definicoes) corpo += sec("Definições") + pop.definicoes.map(function (d) { return "<p><b>" + esc(d[0]) + ":</b> " + esc(d[1]) + "</p>"; }).join("");
+    if (pop.materiais) corpo += sec("Materiais e recursos") + alineas(pop.materiais);
+    corpo += sec("Procedimento");
+    var np = n;
+    etapas.forEach(function (e, i) { corpo += "<h3>" + np + "." + (i + 1) + " " + esc(e[0].toUpperCase()) + "</h3>" + alineas(e[1]); });
+    corpo += sec("Indicador de desempenho") + "<p>" + esc(pop.indicadorTexto || pop.indicador) + "</p>";
+    corpo += sec("Tratamento de não conformidades") + "<p>" + esc(pop.naoConformidade || "Anote o que aconteceu, a causa provável e o que foi feito. Leve os casos repetidos para a reunião mensal: se o mesmo problema volta, o procedimento precisa mudar.") + "</p>";
+    corpo += sec("Controle de revisões e aprovação") + '<table class="abnt-tab"><thead><tr><th>Versão</th><th>Data</th><th>Alteração</th><th>Responsável</th></tr></thead><tbody><tr><td>1.0</td><td>' + P.dataBR(P.hoje()) + "</td><td>Emissão inicial</td><td>" + esc(K.nome) + "</td></tr><tr><td>&nbsp;</td><td></td><td></td><td></td></tr></tbody></table>" +
+      '<table class="abnt-ficha abnt-assina"><tbody><tr><th>Elaborado por</th><td>' + esc(K.nome) + " – Administrador</td></tr><tr><th>Aprovado por</th><td>" + esc(c && c.contato ? c.contato : "Nome: ______________________________") + "</td></tr><tr><th>Assinatura e data</th><td>__________________________  ____/____/______</td></tr></tbody></table>";
+    if (pop.referencias) corpo += '<p class="abnt-ref-titulo">REFERÊNCIAS</p>' + pop.referencias.map(function (r) { return '<p class="abnt-ref">' + esc(r).replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/\*([^*]+)\*/g, "<i>$1</i>") + "</p>"; }).join("");
     main.innerHTML = barraImpressao(c, 2, pop.id) +
-      '<article class="doc"><div class="doc-cab"><div><small>Procedimento Operacional Padrão</small><h1>' + pop.id + " " + esc(pop.titulo) + "</h1></div>" +
-      '<div style="text-align:right"><small>Empresa</small><b>' + esc(c ? c.empresa : "Modelo") + "</b></div></div>" +
-      '<table class="ficha-tec"><tbody>' +
-      "<tr><td>Área</td><td>" + C.areas[pop.area].nome + "</td></tr><tr><td>Responsável</td><td>" + esc(pop.responsavel) + "</td></tr>" +
-      "<tr><td>Frequência</td><td>" + esc(pop.frequencia) + "</td></tr><tr><td>Registro</td><td>Planilha " + esc(pl.nome) + " (" + pop.planilha + ")</td></tr>" +
-      "<tr><td>Indicador e meta</td><td>" + esc(pop.indicador) + "</td></tr><tr><td>Versão</td><td>1.0, de " + P.dataBR(P.hoje()) + "</td></tr>" +
-      "<tr><td>Elaborado por</td><td>" + esc(K.nome) + "</td></tr><tr><td>Aprovado por</td><td>" + esc(c && c.contato ? c.contato : "_______________________") + "</td></tr></tbody></table>" +
-      "<h2>Objetivo</h2><p>" + esc(pop.objetivo) + "</p>" +
-      "<h2>Passo a passo</h2><ol>" + pop.passos.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ol>" +
-      "<h2>O que fazer quando algo sai do padrão</h2><p>Anote o que aconteceu, a causa provável e o que foi feito. Leve os casos repetidos para a reunião mensal: se o mesmo problema volta, o procedimento precisa mudar.</p>" +
-      "<h2>Controle de revisões</h2><table><thead><tr><th>Versão</th><th>Data</th><th>O que mudou</th><th>Responsável</th></tr></thead><tbody><tr><td>1.0</td><td>" + P.dataBR(P.hoje()) + "</td><td>Criação</td><td>" + esc(K.nome) + "</td></tr><tr><td>&nbsp;</td><td></td><td></td><td></td></tr></tbody></table>" +
-      '<p class="nao-imprimir" style="margin-top:20px"><a class="btn btn-linha btn-p" href="materiais/planilhas/' + pop.planilha + '" download>Baixar a planilha deste POP</a></p></article>';
+      '<p class="nao-imprimir acoes" style="margin:-6px 0 18px"><a class="btn btn-linha btn-p" href="' + arq + '.docx">Baixar em Word</a><a class="btn btn-linha btn-p" href="' + arq + '.pdf">Baixar em PDF</a><a class="btn btn-linha btn-p" href="materiais/planilhas/' + pop.planilha + '" download>Planilha deste POP</a></p>' +
+      '<table class="abnt-moldura"><thead><tr><td>' + timbradoTopo(pop.id) + '</td></tr></thead><tfoot><tr><td>' + timbradoRodape() + '</td></tr></tfoot><tbody><tr><td><article class="doc-abnt">' + corpo + "</article></td></tr></tbody></table>";
   };
 
   // ---------- Apostila do módulo ----------
@@ -171,7 +201,7 @@
     function lista(n) {
       if (n === 1) return '<p>O questionário tem ' + C.perguntas.filter(function (p) { return !p.tipos; }).length + " perguntas gerais e outras específicas por tipo de empresa. Ele fica dentro de cada cliente: abra um cliente e vá à etapa 1.</p>" +
         '<div class="acoes" style="margin-top:12px"><a class="btn btn-linha btn-p" href="#/clientes">Escolher cliente</a></div>';
-      if (n === 2) return C.pops.map(function (p) { return '<div class="material"><div><b>' + p.id + " " + esc(p.titulo) + "</b><p>" + esc(p.objetivo) + '</p></div><div class="acoes"><a class="btn btn-linha btn-p" href="#/pop/' + p.id + '">Abrir POP</a><a class="btn btn-linha btn-p" href="materiais/planilhas/' + p.planilha + '" download>Planilha</a></div></div>'; }).join("");
+      if (n === 2) return C.pops.map(function (p) { var a = "materiais/pops/" + arquivoPop(p); return '<div class="material"><div><b>' + p.id + " " + esc(p.titulo) + "</b><p>" + esc(p.objetivo) + '</p></div><div class="acoes"><a class="btn btn-linha btn-p" href="#/pop/' + p.id + '">Abrir POP</a><a class="btn btn-linha btn-p" href="' + a + '.docx">Word</a><a class="btn btn-linha btn-p" href="' + a + '.pdf">PDF</a><a class="btn btn-linha btn-p" href="materiais/planilhas/' + p.planilha + '" download>Planilha</a></div></div>'; }).join("") + '<p class="muted pequeno" style="margin-top:12px">POPs no padrão ABNT (Arial 12, margens 3 e 2 cm, espaçamento 1,5), no seu timbrado. As planilhas de gestão (precificação, 5W2H, 4 Ps, PDCA e SWOT) estão em <a href="#/ferramentas">Ferramentas</a>.</p>';
       if (n === 3) return '<div class="material"><div><b>Dashboard simples</b><p>Uma página com o essencial.</p></div><div class="acoes"><a class="btn btn-linha btn-p" href="#/dashboard/simples">Abrir</a></div></div>' +
         '<div class="material"><div><b>Dashboard completo</b><p>Vendas, estoque e financeiro com filtros.</p></div><div class="acoes"><a class="btn btn-linha btn-p" href="#/dashboard/completo">Abrir</a></div></div>' +
         '<div class="material"><div><b>Kit Power BI</b><p>CSVs, medidas DAX, tema e passo a passo.</p></div><div class="acoes"><a class="btn btn-linha btn-p" href="materiais/powerbi/kit-power-bi.zip" download>Baixar</a></div></div>' +

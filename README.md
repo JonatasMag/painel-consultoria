@@ -13,9 +13,12 @@ CRM com funil para uma consultoria de dados e processos. Cada cliente passa por 
 
 **Endereço:** https://jonatasmag.github.io/painel-consultoria/ (acesso com senha).
 
-## Acesso protegido
+## Meu Painel: área do cliente e acesso protegido
 
-O painel pede senha. Os textos, os modelos e os arquivos de `materiais/` estão **criptografados** na pasta `cofre/` (AES-256-GCM, chave derivada da senha com PBKDF2-SHA256, 600 mil iterações). Sem a senha, quem abrir os arquivos do repositório ou do site vê só dados embaralhados. Os originais ficam fora deste repositório.
+- **Clientes** criam conta grátis (nome, empresa, WhatsApp e e-mail), entram com e-mail e senha e baixam as **Ferramentas**: planilhas de precificação de produtos, plano de ação 5W2H, 4 Ps do marketing, ciclo PDCA e matriz SWOT, cada uma com o POP de implantação no padrão ABNT (Word e PDF).
+- **O administrador** vê o painel completo e a aba **Acessos**: quem se cadastrou, quando e de onde acessa, o aparelho e o que mais baixa. A cidade é aproximada e o IP não é guardado.
+- **Os demais materiais** (CRM, POPs da consultoria, planilhas, dashboards, automações e treinamentos) ficam **criptografados** na pasta `cofre/` (AES-256-GCM, chave PBKDF2-SHA256 com 600 mil iterações). Só o administrador abre.
+- Cadastro, login e registro de acessos usam o **Supabase** com regras de acesso no banco (RLS). Passo a passo em [`supabase/LEIA-ME.md`](supabase/LEIA-ME.md).
 
 Os clientes de exemplo e todos os números dos modelos são **fictícios**.
 

@@ -40,6 +40,8 @@
     else if (a === "dashboard" && cam[1] === "completo") P.views.dashCompleto(main);
     else if (a === "dashboard") P.views.dashSimples(main);
     else if (a === "config") P.views.config(main);
+    else if (a === "acessos") P.views.acessos(main);
+    else if (a === "ferramentas") P.views.ferramentas(main);
     else P.views.naoEncontrado(main);
 
     P.atualizarCasca();

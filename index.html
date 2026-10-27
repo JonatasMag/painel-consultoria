@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Painel de Consultoria | Jonatas Magalhães</title>
-  <meta name="description" content="CRM e funil para consultoria de dados e processos: diagnóstico, POPs, planilhas, dashboards, automações, acompanhamento mensal e treinamento." />
+  <title>Meu Painel | Jonatas Magalhães</title>
+  <meta name="description" content="Ferramentas de gestão gratuitas para empresas: precificação de produtos, plano de ação 5W2H, 4 Ps do marketing, ciclo PDCA e matriz SWOT, com procedimentos de implantação." />
   <meta name="theme-color" content="#0c2238" />
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
   <link rel="preload" href="assets/fonts/inter-400.woff" as="font" type="font/woff" crossorigin />
@@ -12,17 +12,110 @@
 </head>
 <body>
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
-  <section class="acesso" id="acesso" aria-labelledby="acesso-titulo">
-    <form class="acesso-cartao" id="form-acesso">
-      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34.5 19 23l8 7 13-16" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square"/><circle cx="8" cy="34.5" r="3.4" fill="currentColor"/><circle cx="19" cy="23" r="3.4" fill="currentColor"/><circle cx="27" cy="30" r="3.4" fill="currentColor"/><circle cx="40" cy="14" r="3.4" fill="#e8a33d"/></svg>
-      <h1 id="acesso-titulo">Painel de Consultoria</h1>
-      <p>Acesso restrito. Os materiais deste painel são protegidos por senha.</p>
-      <div class="campo"><label for="senha">Senha</label><input type="password" id="senha" autocomplete="current-password" required autofocus></div>
-      <p class="acesso-erro" id="erro-acesso" role="alert" hidden></p>
-      <button class="btn btn-sinal" type="submit">Entrar</button>
-      <p class="acesso-nota">Quer conhecer o painel? Fale com <a href="https://jonatasmag.github.io/#contato">Jonatas Magalhães</a>.</p>
-    </form>
+
+  <!-- ================= ENTRADA ================= -->
+  <section class="acesso" id="acesso" aria-label="Entrar no painel">
+    <div class="acesso-lado">
+      <a class="acesso-marca" href="https://jonatasmag.github.io/">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34.5 19 23l8 7 13-16" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square"/><circle cx="8" cy="34.5" r="3.4" fill="currentColor"/><circle cx="19" cy="23" r="3.4" fill="currentColor"/><circle cx="27" cy="30" r="3.4" fill="currentColor"/><circle cx="40" cy="14" r="3.4" fill="#e8a33d"/></svg>
+        <span><b>Jonatas Magalhães</b><small>Consultoria em Dados, Processos e Operações</small></span>
+      </a>
+      <div class="acesso-texto">
+        <p class="acesso-selo">Meu Painel</p>
+        <h1>Ferramentas de gestão prontas para usar na sua empresa</h1>
+        <p>Crie sua conta grátis e baixe planilhas com as contas já montadas, cada uma com o procedimento de implantação passo a passo.</p>
+        <ul class="acesso-lista" id="lista-ferramentas"></ul>
+      </div>
+      <p class="acesso-pe">Planilhas para Excel e procedimentos (POPs) no padrão ABNT, em Word e PDF.</p>
+    </div>
+
+    <div class="acesso-form">
+      <div class="acesso-cartao">
+        <div class="acesso-abas" role="tablist" aria-label="Entrar ou criar conta" id="abas-acesso">
+          <button type="button" role="tab" id="aba-entrar" aria-controls="f-entrar" aria-selected="true">Entrar</button>
+          <button type="button" role="tab" id="aba-cadastro" aria-controls="f-cadastro" aria-selected="false">Criar conta grátis</button>
+        </div>
+
+        <p class="acesso-aviso" id="aviso-config" hidden>O cadastro de clientes está sendo configurado. Volte em breve ou fale comigo pelo <a data-whats href="#">WhatsApp</a>.</p>
+
+        <form id="f-entrar" class="acesso-f" novalidate>
+          <div class="campo"><label for="e-email">E-mail</label><input type="email" id="e-email" autocomplete="email" required></div>
+          <div class="campo"><label for="e-senha">Senha</label><input type="password" id="e-senha" autocomplete="current-password" required></div>
+          <p class="acesso-erro" role="alert" hidden></p>
+          <button class="btn btn-sinal" type="submit">Entrar</button>
+          <button type="button" class="link" data-ir="f-recuperar">Esqueci minha senha</button>
+        </form>
+
+        <form id="f-cadastro" class="acesso-f" novalidate hidden>
+          <div class="campo"><label for="c-nome">Seu nome</label><input type="text" id="c-nome" autocomplete="name" maxlength="120" required></div>
+          <div class="campo"><label for="c-empresa">Empresa</label><input type="text" id="c-empresa" autocomplete="organization" maxlength="120" required></div>
+          <div class="campo"><label for="c-tel">WhatsApp <span class="opcional">(opcional)</span></label><input type="tel" id="c-tel" autocomplete="tel" maxlength="20" placeholder="(47) 99999-9999"></div>
+          <div class="campo"><label for="c-email">E-mail</label><input type="email" id="c-email" autocomplete="email" required></div>
+          <div class="campo"><label for="c-senha">Crie uma senha</label><input type="password" id="c-senha" autocomplete="new-password" minlength="8" required><small class="dica">Pelo menos 8 caracteres.</small></div>
+          <label class="check"><input type="checkbox" id="c-aceite" required><span>Concordo que meus dados de cadastro e o registro de uso do painel (data, cidade aproximada e materiais acessados) sejam usados por Jonatas Magalhães para melhorar os materiais e entrar em contato. Posso excluir minha conta a qualquer momento.</span></label>
+          <p class="acesso-erro" role="alert" hidden></p>
+          <button class="btn btn-sinal" type="submit">Criar conta e acessar</button>
+        </form>
+
+        <form id="f-recuperar" class="acesso-f" novalidate hidden>
+          <h2>Recuperar senha</h2>
+          <p class="muted">Enviamos um link para você criar uma senha nova.</p>
+          <div class="campo"><label for="r-email">E-mail do cadastro</label><input type="email" id="r-email" autocomplete="email" required></div>
+          <p class="acesso-erro" role="alert" hidden></p>
+          <button class="btn btn-sinal" type="submit">Enviar link</button>
+          <button type="button" class="link" data-ir="f-entrar">Voltar para Entrar</button>
+        </form>
+
+        <form id="f-nova-senha" class="acesso-f" novalidate hidden>
+          <h2>Crie uma senha nova</h2>
+          <div class="campo"><label for="n-senha">Senha nova</label><input type="password" id="n-senha" autocomplete="new-password" minlength="8" required><small class="dica">Pelo menos 8 caracteres.</small></div>
+          <p class="acesso-erro" role="alert" hidden></p>
+          <button class="btn btn-sinal" type="submit">Salvar senha</button>
+        </form>
+
+        <form id="f-cofre" class="acesso-f" novalidate hidden>
+          <h2>Acesso do consultor</h2>
+          <p class="muted">Digite a senha do cofre para abrir o CRM e os materiais restritos.</p>
+          <div class="campo"><label for="k-senha">Senha do cofre</label><input type="password" id="k-senha" autocomplete="current-password" required></div>
+          <p class="acesso-erro" role="alert" hidden></p>
+          <button class="btn btn-sinal" type="submit">Abrir o painel</button>
+          <button type="button" class="link" data-ir="f-entrar">Voltar</button>
+        </form>
+
+        <div id="msg-ok" class="acesso-ok" role="status" hidden></div>
+      </div>
+      <p class="acesso-nota">Dúvidas? <a data-whats href="#">Fale comigo no WhatsApp</a> · <a href="https://jonatasmag.github.io/">Portfólio</a></p>
+      <p class="acesso-nota"><button type="button" class="link link-discreto" data-ir="f-cofre">Acesso do consultor</button></p>
+    </div>
   </section>
+
+  <!-- ================= ÁREA DO CLIENTE ================= -->
+  <div class="area-cliente" id="area-cliente" hidden>
+    <header class="cli-topo">
+      <div class="cli-topo-in">
+        <a class="cli-marca" href="#/ferramentas">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34.5 19 23l8 7 13-16" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="square"/><circle cx="8" cy="34.5" r="3.4" fill="currentColor"/><circle cx="19" cy="23" r="3.4" fill="currentColor"/><circle cx="27" cy="30" r="3.4" fill="currentColor"/><circle cx="40" cy="14" r="3.4" fill="#e8a33d"/></svg>
+          <span><b>Meu Painel</b><small>Jonatas Magalhães</small></span>
+        </a>
+        <nav class="cli-menu" aria-label="Seções do painel">
+          <a href="#/ferramentas" data-rota="ferramentas">Ferramentas</a>
+          <a href="#/empresa" data-rota="empresa">Para sua empresa</a>
+          <a href="#/conta" data-rota="conta">Minha conta</a>
+        </nav>
+        <div class="cli-usuario"><span id="cli-nome"></span><button type="button" class="link link-claro" id="cli-sair">Sair</button></div>
+      </div>
+    </header>
+    <main id="cliente-conteudo" class="cli-main" tabindex="-1"></main>
+    <aside class="cli-cta">
+      <div>
+        <b>Quer isso funcionando na sua empresa?</b>
+        <span>Diagnóstico, procedimentos, indicadores e acompanhamento mensal, em Joinville e remoto.</span>
+      </div>
+      <a class="btn btn-sinal" data-whats-cliente href="#" target="_blank" rel="noopener">Falar no WhatsApp</a>
+    </aside>
+  </div>
+
+  <!-- ================= PAINEL DO CONSULTOR ================= -->
   <div class="app" hidden>
     <aside class="lateral" id="lateral">
       <a class="marca" href="#/">
@@ -35,9 +128,11 @@
         <a href="#/clientes" data-rota="clientes">Clientes</a>
         <a href="#/acompanhamento" data-rota="acompanhamento">Acompanhamento <span class="contador" id="contador-avisos" hidden></span></a>
         <a href="#/biblioteca" data-rota="biblioteca">Materiais</a>
+        <a href="#/ferramentas" data-rota="ferramentas">Ferramentas</a>
+        <a href="#/acessos" data-rota="acessos">Acessos</a>
         <a href="#/config" data-rota="config">Configurações</a>
       </nav>
-      <p class="lateral-nota">Os dados ficam só neste navegador. Faça backup em Configurações.</p>
+      <p class="lateral-nota">Os clientes da consultoria ficam só neste navegador. Faça backup em Configurações.</p>
       <button type="button" class="sair" onclick="sairDoPainel()">Sair</button>
     </aside>
     <div class="principal">
@@ -50,8 +145,13 @@
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase-mini.js"></script>
+  <script src="assets/js/rastreio.js"></script>
+  <script src="assets/js/ferramentas.js"></script>
   <script src="assets/js/graficos.js"></script>
   <script src="assets/js/store.js"></script>
   <script src="assets/js/cofre.js"></script>
+  <script src="assets/js/acesso.js"></script>
 </body>
 </html>
