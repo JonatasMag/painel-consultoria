@@ -86,6 +86,10 @@
     SB.cadastrar(d.email, d.senha, { origem: "painel", nome: d.nome, empresa: d.empresa, telefone: d.telefone, aceite: "sim" }, VOLTA)
       .then(function (r) {
         if (r.sessao) return depoisDeEntrar(true, true);
+        if (r.usuario && Array.isArray(r.usuario.identities) && r.usuario.identities.length === 0) {
+          erro(f, "Este e-mail já tem cadastro. Use a aba Entrar ou Esqueci minha senha.");
+          return;
+        }
         ok("<h2>Falta só confirmar o e-mail</h2><p>Enviamos um link para <b>" + esc(d.email) + "</b>. Abra o e-mail, clique no link e você já entra no painel.</p><p class=\"muted pequeno\">Não chegou em 5 minutos? Veja a caixa de spam ou promoções.</p>");
       })
       .catch(function (err) { erro(f, err.message); })
