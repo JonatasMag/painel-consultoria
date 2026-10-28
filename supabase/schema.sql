@@ -139,6 +139,10 @@ revoke all on public.painel_perfis, public.painel_eventos, public.painel_cofre f
 revoke execute on function public.painel_registrar(text, text, text, text, text, text) from public, anon;
 revoke execute on function public.painel_excluir_conta() from public, anon;
 revoke execute on function public.painel_novo_usuario() from public, anon, authenticated;
+-- Acesso das pessoas logadas às tabelas (as regras acima limitam o que cada uma vê)
+grant select, update on public.painel_perfis to authenticated;
+grant select on public.painel_eventos to authenticated;
+grant select on public.painel_cofre to authenticated;
 grant execute on function public.painel_registrar(text, text, text, text, text, text) to authenticated;
 grant execute on function public.painel_excluir_conta() to authenticated;
 grant execute on function public.painel_e_admin() to authenticated;
