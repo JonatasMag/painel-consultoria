@@ -35,12 +35,18 @@ window.FERRAMENTAS = [
   },
 ];
 
-// O que existe no painel para clientes da consultoria (mostrado como vitrine)
+// Materiais da consultoria: aparecem para o cliente só como vitrine (sem download)
 window.EXCLUSIVO = [
-  { n: 1, nome: "Diagnosticar", texto: "Questionário por tipo de empresa e relatório com nota por área, principais achados e plano recomendado." },
-  { n: 2, nome: "Organizar", texto: "Procedimentos padrão (POPs) no padrão ABNT e planilhas de estoque, compras, caixa, contas e vendas." },
-  { n: 3, nome: "Medir", texto: "Dashboards de vendas, estoque e financeiro, kit Power BI e passo a passo para ligar os dados." },
-  { n: 4, nome: "Automatizar", texto: "Alertas de estoque, relatórios automáticos, roteiro de atendimento por WhatsApp e página de captação." },
-  { n: 5, nome: "Acompanhar", texto: "Reunião mensal, indicadores lançados todo mês e avisos quando algo sai do combinado." },
-  { n: 6, nome: "Treinar", texto: "Apostilas, exercícios práticos e certificado com o nome de cada participante." },
+  { n: 1, nome: "Diagnosticar", texto: "Entender como a empresa funciona hoje e por onde começar.",
+    itens: ["Questionário de diagnóstico por tipo de empresa", "Relatório com nota por área e principais achados", "Plano recomendado com prioridades e investimento"] },
+  { n: 2, nome: "Organizar", texto: "Procedimentos e controles que a equipe consegue seguir.",
+    itens: ["POP-01 Recebimento de mercadorias", "POP-02 Contagem rotativa de estoque", "POP-03 Compras e reposição", "POP-04 Fechamento de caixa e fluxo de caixa", "POP-05 Contas a pagar e a receber", "POP-06 Registro e análise de vendas", "6 planilhas de controle: estoque, contagem, compras, caixa, contas e vendas"] },
+  { n: 3, nome: "Medir", texto: "Indicadores que mostram o resultado mês a mês.",
+    itens: ["Dashboard simples", "Dashboard completo com vendas, estoque e financeiro", "Kit Power BI com medidas prontas", "Passo a passo para ligar os dados da empresa"] },
+  { n: 4, nome: "Automatizar", texto: "Menos tarefa manual e respostas mais rápidas.",
+    itens: ["Aviso de estoque baixo no Google Sheets", "Relatório semanal de vendas por e-mail", "Novo pedido no site vai para a planilha e avisa a equipe", "Atendimento automático no WhatsApp", "Landing page de captação"] },
+  { n: 5, nome: "Acompanhar", texto: "Reunião mensal e avisos quando algo sai do combinado.",
+    itens: ["Plano de acompanhamento mensal", "Registro de reuniões e indicadores", "Avisos automáticos de atraso e de indicador pendente"] },
+  { n: 6, nome: "Treinar", texto: "A equipe aprende a usar tudo com os dados da própria empresa.",
+    itens: ["Excel para gestão (4 h)", "Power BI do zero (6 h)", "Processos e POPs na prática (3 h)", "Indicadores e reunião mensal (3 h)", "Certificado com o nome de cada participante"] },
 ];

@@ -42,7 +42,7 @@
     var primeiro = $("#" + id + " input");
     if (primeiro && document.activeElement !== document.body) primeiro.focus();
   }
-  function erro(form, msg) { var p = $(".acesso-erro", form); p.textContent = msg || ""; p.hidden = !msg; }
+  function erro(form, msg) { var p = $(".acesso-erro", form); p.classList.remove("acesso-sucesso"); p.textContent = msg || ""; p.hidden = !msg; }
   function ocupado(form, sim, texto) {
     var b = $("button[type=submit]", form);
     if (sim) { b.dataset.t = b.textContent; b.textContent = texto || "Aguarde..."; } else if (b.dataset.t) b.textContent = b.dataset.t;
@@ -62,11 +62,18 @@
     if (b) { e.preventDefault(); mostrar(b.dataset.ir); }
   });
   function emailValido(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
+  var LC = CFG.loginCliente || { senha: "Cliente", dominio: "clientes.jonatasmag.github.io" };
+  // Endereço interno de login feito a partir do nome: "Maria da Silva" -> maria.da.silva@...
+  function loginDoNome(nome) {
+    var s = String(nome || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, ".").replace(/^\.+|\.+$/g, "").slice(0, 60);
+    return s ? s + "@" + LC.dominio : "";
+  }
 
   $("#f-entrar").addEventListener("submit", function (e) {
     e.preventDefault();
     var f = e.target, email = $("#e-email").value.trim(), senha = $("#e-senha").value;
-    if (!emailValido(email) || !senha) return erro(f, "Digite seu e-mail e sua senha.");
+    if (email.indexOf("@") === -1) email = loginDoNome(email);
+    if (!email || !senha) return erro(f, "Digite o nome do cadastro e a senha.");
     erro(f); ocupado(f, true, "Entrando...");
     SB.entrar(email, senha).then(function () { return depoisDeEntrar(true); })
       .catch(function (err) { erro(f, err.message); })
@@ -76,23 +83,30 @@
   $("#f-cadastro").addEventListener("submit", function (e) {
     e.preventDefault();
     var f = e.target;
-    var d = { nome: $("#c-nome").value.trim(), empresa: $("#c-empresa").value.trim(), telefone: $("#c-tel").value.trim(), email: $("#c-email").value.trim(), senha: $("#c-senha").value };
-    if (d.nome.length < 2) return erro(f, "Digite seu nome.");
+    var d = { nome: $("#c-nome").value.trim().replace(/\s+/g, " "), empresa: $("#c-empresa").value.trim(), telefone: $("#c-tel").value.trim(), email: $("#c-email").value.trim() };
+    if (d.nome.length < 3 || !/[a-zA-ZÀ-ÿ]/.test(d.nome)) return erro(f, "Digite seu nome.");
     if (d.empresa.length < 2) return erro(f, "Digite o nome da empresa.");
     if (!emailValido(d.email)) return erro(f, "Confira o e-mail digitado.");
-    if (d.senha.length < 8) return erro(f, "A senha precisa ter pelo menos 8 caracteres.");
     if (!$("#c-aceite").checked) return erro(f, "Para criar a conta, marque a concordância com o uso dos dados.");
     erro(f); ocupado(f, true, "Criando a conta...");
-    SB.cadastrar(d.email, d.senha, { origem: "painel", nome: d.nome, empresa: d.empresa, telefone: d.telefone, aceite: "sim" }, VOLTA)
+    SB.cadastrar(loginDoNome(d.nome), LC.senha, { origem: "painel", nome: d.nome, empresa: d.empresa, telefone: d.telefone, email_real: d.email, aceite: "sim" }, VOLTA)
       .then(function (r) {
-        if (r.sessao) return depoisDeEntrar(true, true);
         if (r.usuario && Array.isArray(r.usuario.identities) && r.usuario.identities.length === 0) {
-          erro(f, "Este e-mail já tem cadastro. Use a aba Entrar ou Esqueci minha senha.");
+          erro(f, "Já existe um cadastro com esse nome. Se for você, use a aba Entrar. Se não, cadastre com seu nome completo.");
           return;
         }
-        ok("<h2>Falta só confirmar o e-mail</h2><p>Enviamos um link para <b>" + esc(d.email) + "</b>. Abra o e-mail, clique no link e você já entra no painel.</p><p class=\"muted pequeno\">Não chegou em 5 minutos? Veja a caixa de spam ou promoções.</p>");
+        if (r.sessao) { Rastreio.registrar("cadastro", ""); SB.sair(); }
+        f.reset();
+        mostrar("f-entrar");
+        $("#e-email").value = d.nome;
+        $("#e-senha").focus();
+        var aviso = $("#f-entrar .acesso-erro");
+        aviso.hidden = false; aviso.classList.add("acesso-sucesso");
+        aviso.textContent = "Cadastro feito! Agora entre com seu nome e a senha Cliente.";
       })
-      .catch(function (err) { erro(f, err.message); })
+      .catch(function (err) {
+        erro(f, /já tem cadastro/.test(err.message) ? "Já existe um cadastro com esse nome. Se for você, use a aba Entrar. Se não, cadastre com seu nome completo." : err.message);
+      })
       .then(function () { ocupado(f, false); });
   });
 
@@ -199,18 +213,21 @@
             '<a class="baixar" href="' + f.pop + '.pdf" download data-registro="POP PDF: ' + esc(f.nome) + '">' + ICONE.doc + "<span><b>" + f.codigo + "</b><small>PDF</small></span></a>" +
             "</div></article>";
         }).join("") +
-        '<a class="ferr ferr-convite" href="#/empresa"><p class="cli-sobre">Para clientes da consultoria</p><h2>Quer esses controles funcionando na sua empresa?</h2><p>Na consultoria, os procedimentos e as planilhas saem com o nome da sua empresa, junto com diagnóstico, indicadores e acompanhamento mensal.</p><span class="btn btn-sinal">Ver o que está incluído</span></a>' +
+        '<a class="ferr ferr-convite" href="#/materiais"><p class="cli-sobre">Para clientes da consultoria</p><h2>Quer esses controles funcionando na sua empresa?</h2><p>Na consultoria, os procedimentos e as planilhas saem com o nome da sua empresa, junto com diagnóstico, indicadores e acompanhamento mensal.</p><span class="btn btn-sinal">Ver o que está incluído</span></a>' +
         "</div>" +
         '<p class="cli-nota">Os dados das planilhas são exemplos. Troque pelos da sua empresa: as células em creme são as que você digita, e o resto se calcula sozinho.</p>';
     },
-    empresa: function (m) {
+    materiais: function (m) {
       var X = window.EXCLUSIVO || [];
-      var msg = "Olá, Jonatas! Sou " + (perfil && perfil.nome || "") + (perfil && perfil.empresa ? ", da " + perfil.empresa : "") + ". Vi o Meu Painel e quero saber como a consultoria funcionaria na minha empresa.";
-      m.innerHTML = '<div class="cli-cab"><p class="cli-sobre">Para clientes da consultoria</p><h1>O que sua empresa recebe na consultoria</h1><p>Dentro do painel, cada cliente tem um espaço com o próprio nome e passa por seis etapas. Os materiais saem personalizados e na ordem das prioridades do diagnóstico.</p></div>' +
+      var msg = generico() ? "Olá, Jonatas! Vi os materiais do Meu Painel e quero saber como a consultoria funcionaria na minha empresa."
+        : "Olá, Jonatas! Sou " + (perfil && perfil.nome || "") + (perfil && perfil.empresa ? ", da " + perfil.empresa : "") + ". Vi os materiais do Meu Painel e quero saber como a consultoria funcionaria na minha empresa.";
+      m.innerHTML = '<div class="cli-cab"><p class="cli-sobre">Exclusivo para clientes da consultoria</p><h1>Materiais</h1><p>Tudo o que a consultoria entrega, etapa por etapa. Para clientes, os materiais saem com o nome da empresa e na ordem das prioridades do diagnóstico.</p></div>' +
         '<ol class="cli-etapas">' + X.map(function (e) {
-          return '<li><span class="etapa-n">' + e.n + '</span><div><h2>' + esc(e.nome) + "</h2><p>" + esc(e.texto) + '</p></div><span class="etapa-tranca" title="Exclusivo para clientes">' + ICONE.cadeado + "<small>Exclusivo</small></span></li>";
+          return '<li><span class="etapa-n">' + e.n + '</span><div><h2>' + esc(e.nome) + "</h2><p>" + esc(e.texto) + "</p>" +
+            (e.itens ? '<ul class="cli-itens">' + e.itens.map(function (x) { return "<li>" + ICONE.cadeado + "<span>" + esc(x) + "</span></li>"; }).join("") + "</ul>" : "") +
+            '</div><span class="etapa-tranca" title="Exclusivo para clientes">' + ICONE.cadeado + "<small>Exclusivo</small></span></li>";
         }).join("") + "</ol>" +
-        '<section class="cli-convite"><div><h2>Vamos conversar sobre a sua empresa?</h2><p>A primeira conversa é sem compromisso: entendo como a operação funciona hoje e indico por onde começar.</p></div>' +
+        '<section class="cli-convite"><div><h2>Quer esses materiais na sua empresa?</h2><p>A primeira conversa é sem compromisso: entendo como a operação funciona hoje e indico por onde começar.</p></div>' +
         '<a class="btn btn-sinal" id="cta-empresa" target="_blank" rel="noopener" href="' + whats(msg) + '">Falar no WhatsApp</a></section>';
       $("#cta-empresa").addEventListener("click", function () { Rastreio.registrar("visita", "Contato pelo WhatsApp"); });
     },
@@ -235,11 +252,13 @@
       });
     },
   };
-  var TITULOS = { ferramentas: "Ferramentas", empresa: "Para sua empresa", conta: "Minha conta" };
+  var TITULOS = { ferramentas: "Ferramentas", materiais: "Materiais", conta: "Minha conta" };
+  function generico() { return false; }
 
   function rotaCliente() {
     var r = location.hash.replace(/^#\/?/, "").split("/")[0];
-    if (!VIEWS[r]) r = "ferramentas";
+    if (r === "empresa") r = "materiais";
+    if (!VIEWS[r] || r === "conta") r = "ferramentas";
     $$(".cli-menu a").forEach(function (a) { a.classList.toggle("ativo", a.dataset.rota === r); a.setAttribute("aria-current", a.dataset.rota === r ? "page" : "false"); });
     var m = $("#cliente-conteudo");
     VIEWS[r](m);
@@ -253,10 +272,10 @@
     $("#acesso").hidden = true;
     $("#area-cliente").hidden = false;
     $("#cli-nome").textContent = (perfil.nome || "").split(" ")[0];
-    $("[data-whats-cliente]").href = whats("Olá, Jonatas! Sou " + perfil.nome + (perfil.empresa ? ", da " + perfil.empresa : "") + ". Vi o Meu Painel e quero conversar sobre a minha empresa.");
+    $("[data-whats-cliente]").href = whats(generico() ? "Olá, Jonatas! Vi o Meu Painel e quero conversar sobre a minha empresa." : "Olá, Jonatas! Sou " + perfil.nome + (perfil.empresa ? ", da " + perfil.empresa : "") + ". Vi o Meu Painel e quero conversar sobre a minha empresa.");
     $("[data-whats-cliente]").addEventListener("click", function () { Rastreio.registrar("visita", "Contato pelo WhatsApp"); });
     $("#cli-sair").addEventListener("click", window.sairDoPainel);
-    if (!/^#\/(ferramentas|empresa|conta)/.test(location.hash)) history.replaceState(null, "", "#/ferramentas");
+    if (!/^#\/(ferramentas|materiais)/.test(location.hash)) history.replaceState(null, "", "#/ferramentas");
     window.addEventListener("hashchange", rotaCliente);
     rotaCliente();
   }

@@ -63,6 +63,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .opcional { font-weight: 400; color: var(--slate); }
 .dica { font-size: 13px; color: var(--slate); }
 .acesso-erro { color: var(--critico); font-size: 15px; font-weight: 600; }
+.acesso-erro.acesso-sucesso { color: #1f7a52; }
+.acesso-dica { font-size: 14px; color: var(--slate); text-align: center; }
+.acesso-dica b { color: var(--ink); }
 .acesso-ok { display: grid; gap: 10px; }
 .acesso-ok h2 { font-size: 22px; }
 .acesso-aviso { padding: 12px 14px; border-radius: 12px; background: var(--alerta-bg); font-size: 15px; }
@@ -116,10 +119,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
 #acessos-corpo .graf { max-width: none; }
 .cli-nota { margin-top: 22px; font-size: 14px; color: var(--slate); }
 .cli-etapas { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.cli-etapas li { display: grid; grid-template-columns: 48px 1fr auto; gap: 18px; align-items: center; padding: 20px 22px; background: var(--white); border: 1px solid var(--fog); border-radius: 16px; }
+.cli-etapas > li { display: grid; grid-template-columns: 48px 1fr auto; gap: 18px; align-items: start; padding: 20px 22px; background: var(--white); border: 1px solid var(--fog); border-radius: 16px; }
 .etapa-n { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--paper-2); font-family: var(--display); font-weight: 600; font-size: 18px; color: var(--ink); }
 .cli-etapas h2 { font-size: 19px; }
 .cli-etapas p { color: var(--slate); margin-top: 4px; font-size: 15px; }
+.cli-itens { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 18px; }
+.cli-itens li { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; color: var(--slate); }
+.cli-itens svg { width: 14px; height: 14px; flex: none; margin-top: 3px; fill: none; stroke: var(--steel-soft); stroke-width: 2; }
+.cli-menu a[hidden] { display: none; }
 .etapa-tranca { display: grid; justify-items: center; gap: 2px; color: var(--slate); }
 .etapa-tranca svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; }
 .etapa-tranca small { font-size: 12px; }
@@ -373,7 +380,8 @@ details.guia ol { margin: 12px 0 8px; padding-left: 22px; display: grid; gap: 6p
 @media (max-width: 640px) {
   .ferr-baixar { grid-template-columns: 1fr; }
   .ferr-lista { grid-template-columns: 1fr; }
-  .cli-etapas li { grid-template-columns: 40px 1fr; }
+  .cli-etapas > li { grid-template-columns: 40px 1fr; }
+  .cli-itens { grid-template-columns: 1fr; }
   .etapa-tranca { display: none; }
   .cli-dados { grid-template-columns: 1fr; gap: 2px; }
   .cli-dados dd { margin-bottom: 10px; }

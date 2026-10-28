@@ -39,11 +39,11 @@
         <p class="acesso-aviso" id="aviso-config" hidden>O cadastro de clientes está sendo configurado. Volte em breve ou fale comigo pelo <a data-whats href="#">WhatsApp</a>.</p>
 
         <form id="f-entrar" class="acesso-f" novalidate>
-          <div class="campo"><label for="e-email">E-mail</label><input type="email" id="e-email" autocomplete="email" required></div>
+          <div class="campo"><label for="e-email">Nome do cadastro</label><input type="text" id="e-email" autocomplete="username" spellcheck="false" required></div>
           <div class="campo"><label for="e-senha">Senha</label><input type="password" id="e-senha" autocomplete="current-password" required></div>
           <p class="acesso-erro" role="alert" hidden></p>
           <button class="btn btn-sinal" type="submit">Entrar</button>
-          <button type="button" class="link" data-ir="f-recuperar">Esqueci minha senha</button>
+          <p class="acesso-dica">Clientes: entre com o <b>nome do cadastro</b> e a senha <b>Cliente</b>.</p>
         </form>
 
         <form id="f-cadastro" class="acesso-f" novalidate hidden>
@@ -51,10 +51,10 @@
           <div class="campo"><label for="c-empresa">Empresa</label><input type="text" id="c-empresa" autocomplete="organization" maxlength="120" required></div>
           <div class="campo"><label for="c-tel">WhatsApp <span class="opcional">(opcional)</span></label><input type="tel" id="c-tel" autocomplete="tel" maxlength="20" placeholder="(47) 99999-9999"></div>
           <div class="campo"><label for="c-email">E-mail</label><input type="email" id="c-email" autocomplete="email" required></div>
-          <div class="campo"><label for="c-senha">Crie uma senha</label><input type="password" id="c-senha" autocomplete="new-password" minlength="8" required><small class="dica">Pelo menos 8 caracteres.</small></div>
           <label class="check"><input type="checkbox" id="c-aceite" required><span>Concordo que meus dados de cadastro e o registro de uso do painel (data, cidade aproximada e materiais acessados) sejam usados por Jonatas Magalhães para melhorar os materiais e entrar em contato. Posso excluir minha conta a qualquer momento.</span></label>
           <p class="acesso-erro" role="alert" hidden></p>
-          <button class="btn btn-sinal" type="submit">Criar conta e acessar</button>
+          <button class="btn btn-sinal" type="submit">Criar conta</button>
+          <p class="acesso-dica">Após o cadastro, faça seu login com seu nome de cadastro e a senha <b>Cliente</b>.</p>
         </form>
 
         <form id="f-recuperar" class="acesso-f" novalidate hidden>
@@ -99,8 +99,7 @@
         </a>
         <nav class="cli-menu" aria-label="Seções do painel">
           <a href="#/ferramentas" data-rota="ferramentas">Ferramentas</a>
-          <a href="#/empresa" data-rota="empresa">Para sua empresa</a>
-          <a href="#/conta" data-rota="conta">Minha conta</a>
+          <a href="#/materiais" data-rota="materiais">Materiais</a>
         </nav>
         <div class="cli-usuario"><span id="cli-nome"></span><button type="button" class="link link-claro" id="cli-sair">Sair</button></div>
       </div>

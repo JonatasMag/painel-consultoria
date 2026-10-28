@@ -63,7 +63,7 @@ begin
       left(coalesce(new.raw_user_meta_data ->> 'nome', ''), 120),
       left(coalesce(new.raw_user_meta_data ->> 'empresa', ''), 120),
       left(coalesce(new.raw_user_meta_data ->> 'telefone', ''), 30),
-      left(coalesce(new.email, ''), 254),
+      left(coalesce(nullif(new.raw_user_meta_data ->> 'email_real', ''), new.email, ''), 254),
       case when new.raw_user_meta_data ->> 'aceite' = 'sim' then now() end
     )
     on conflict (id) do nothing;
