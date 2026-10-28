@@ -34,10 +34,24 @@ window.Store = (function () {
       return txt ? JSON.parse(txt) : null;
     } catch (e) { return memoria; }
   }
+  // Cópia na nuvem (Supabase), só para o administrador logado: os clientes da
+  // consultoria aparecem iguais em qualquer navegador ou computador.
+  var envio = null;
+  function nuvemAtiva() { return window.CRM_NUVEM_ATIVO && window.SB && SB.configurado() && SB.sessao(); }
+  function enviarNuvem() {
+    if (!nuvemAtiva()) return;
+    clearTimeout(envio);
+    envio = setTimeout(function () {
+      SB.gravar("painel_crm", { id: 1, dados: estado, atualizado_em: estado.atualizadoEm }).catch(function () {
+        if (window.P && P.toast) P.toast("Não foi possível salvar na nuvem. Os dados ficaram neste navegador.");
+      });
+    }, 800);
+  }
   function gravar() {
     estado.atualizadoEm = new Date().toISOString();
     try { window.localStorage.setItem(CHAVE, JSON.stringify(estado)); }
     catch (e) { memoria = JSON.parse(JSON.stringify(estado)); }
+    enviarNuvem();
   }
 
   function exemplo() {
@@ -77,8 +91,16 @@ window.Store = (function () {
   }
 
   function carregar() {
-    estado = ler();
-    if (!estado) { estado = exemplo(); gravar(); }
+    var local = ler(), nuvem = window.CRM_NUVEM || null;
+    if (nuvem && (!local || (nuvem.atualizadoEm || "") >= (local.atualizadoEm || ""))) {
+      estado = nuvem;
+      try { window.localStorage.setItem(CHAVE, JSON.stringify(estado)); } catch (e) { memoria = estado; }
+    } else if (local) {
+      estado = local;
+      if (nuvemAtiva()) enviarNuvem();
+    } else {
+      estado = exemplo(); gravar();
+    }
     return estado;
   }
 

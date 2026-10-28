@@ -119,6 +119,9 @@ window.SB = (function () {
     ler: function (tabela, consulta) {
       return comToken(function (t) { return pedir("/rest/v1/" + tabela + "?" + consulta, {}, t); });
     },
+    gravar: function (tabela, objeto) {
+      return comToken(function (t) { return pedir("/rest/v1/" + tabela, { method: "POST", body: objeto, headers: { Prefer: "resolution=merge-duplicates,return=minimal" } }, t); });
+    },
     rpc: function (funcao, args) {
       return comToken(function (t) { return pedir("/rest/v1/rpc/" + funcao, { method: "POST", body: args || {} }, t); });
     },

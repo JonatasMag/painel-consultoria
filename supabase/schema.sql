@@ -39,6 +39,13 @@ create table if not exists public.painel_cofre (
   chave text not null
 );
 
+-- ---------- CRM: clientes da consultoria (cópia na nuvem, só o admin) ----------
+create table if not exists public.painel_crm (
+  id            int primary key default 1 check (id = 1),
+  dados         jsonb not null,
+  atualizado_em timestamptz not null default now()
+);
+
 -- ---------- É administrador? ----------
 create or replace function public.painel_e_admin()
 returns boolean language sql stable security definer set search_path = public as $$
@@ -117,6 +124,11 @@ end $$;
 alter table public.painel_perfis  enable row level security;
 alter table public.painel_eventos enable row level security;
 alter table public.painel_cofre   enable row level security;
+alter table public.painel_crm     enable row level security;
+
+drop policy if exists "crm: só admin" on public.painel_crm;
+create policy "crm: só admin" on public.painel_crm
+  for all to authenticated using (public.painel_e_admin()) with check (public.painel_e_admin());
 
 drop policy if exists "perfil: ver o próprio ou admin vê todos" on public.painel_perfis;
 create policy "perfil: ver o próprio ou admin vê todos" on public.painel_perfis
@@ -135,7 +147,7 @@ create policy "cofre: só admin lê" on public.painel_cofre
   for select to authenticated using (public.painel_e_admin());
 
 -- Ninguém de fora (anon) lê nada; funções só para usuários logados
-revoke all on public.painel_perfis, public.painel_eventos, public.painel_cofre from anon;
+revoke all on public.painel_perfis, public.painel_eventos, public.painel_cofre, public.painel_crm from anon;
 revoke execute on function public.painel_registrar(text, text, text, text, text, text) from public, anon;
 revoke execute on function public.painel_excluir_conta() from public, anon;
 revoke execute on function public.painel_novo_usuario() from public, anon, authenticated;
@@ -143,6 +155,7 @@ revoke execute on function public.painel_novo_usuario() from public, anon, authe
 grant select, update on public.painel_perfis to authenticated;
 grant select on public.painel_eventos to authenticated;
 grant select on public.painel_cofre to authenticated;
+grant select, insert, update on public.painel_crm to authenticated;
 grant execute on function public.painel_registrar(text, text, text, text, text, text) to authenticated;
 grant execute on function public.painel_excluir_conta() to authenticated;
 grant execute on function public.painel_e_admin() to authenticated;

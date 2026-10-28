@@ -45,6 +45,14 @@ window.Cofre = (function () {
     s.onload = function () { carregarTelas(i + 1); };
     document.body.appendChild(s);
   }
+  // Clientes da consultoria guardados na nuvem (só com o administrador logado)
+  function buscarNuvem() {
+    if (!(window.SB && SB.configurado() && SB.sessao())) return Promise.resolve();
+    return SB.ler("painel_crm", "select=dados&id=eq.1").then(function (l) {
+      window.CRM_NUVEM_ATIVO = true;
+      if (l && l[0] && l[0].dados) window.CRM_NUVEM = l[0].dados;
+    }).catch(function () { /* tabela ainda não criada: segue só com o navegador */ });
+  }
   // Abre o conteúdo e mostra o painel do consultor
   function entrar(k) {
     chave = k;
@@ -58,7 +66,7 @@ window.Cofre = (function () {
       document.getElementById("acesso").hidden = true;
       document.getElementById("area-cliente").hidden = true;
       document.querySelector(".app").hidden = false;
-      carregarTelas(0);
+      buscarNuvem().then(function () { carregarTelas(0); });
     }).catch(function (e) { chave = null; throw e; });
   }
 

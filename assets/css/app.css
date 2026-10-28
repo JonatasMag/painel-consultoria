@@ -160,6 +160,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 main { padding: 36px clamp(18px, 4vw, 48px) 80px; max-width: 1240px; outline: none; }
 main:focus, main:focus-visible { outline: none; }
 .aviso-exemplo { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 12px clamp(18px, 4vw, 48px); background: var(--alerta-bg); border-bottom: 1px solid #f0d9ae; font-size: 15px; }
+.aviso-exemplo[hidden] { display: none; }
 
 /* ---------- Componentes ---------- */
 .topo { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
